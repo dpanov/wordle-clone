@@ -1,6 +1,5 @@
 const state = {
   word: '',
-  wordLength: 0,
   currenRowIndex: 1,
   currentColumnIndex: 1,
 }
@@ -12,14 +11,13 @@ fetch('https://words.dev-apis.com/word-of-the-day')
   .then((data) => {
     document.getElementById('main').classList.remove('is-loading');
     state.word = data.word;
-    state.wordLength = data.word.length;
   });
 
 document.addEventListener('keydown', function (event) {
   const key = event.key;
 
   if (key === "Enter") {
-    handleEnter(state.currentRowIndex);
+    handleEnter(state.currentRowIndex, state.word);
   } else if (key === "Backspace") {
     event.preventDefault();
     handleBackspace({currentRowIndex: state.currentRowIndex, currentColumnIndex: state.currentColumnIndex});
@@ -51,20 +49,21 @@ function handleFocus(event) {
   state.currentColumnIndex = focusedElement.dataset.col;
 }
 
-function handleEnter(currentRowIndex) {
+function handleEnter(currentRowIndex, word) {
   const currentRow = document.querySelector(`#row-${currentRowIndex}`);
   const inputs = currentRow.querySelectorAll('input');
+  const wordLength = word.length;
 
-  if (!inputs[state.wordLength - 1].value) {
+  if (!inputs[wordLength - 1].value) {
     return alert('Short word');
   }
   
   inputs.forEach((input, index) => {
     const value = input.value;
 
-    if (value === state.word[index]) {
+    if (value === word[index]) {
       input.classList.add('win');
-    } else if (value && state.word.includes(value)) {
+    } else if (value && word.includes(value)) {
       input.classList.add('included');
     } else {
       input.classList.add('nope');
@@ -72,7 +71,7 @@ function handleEnter(currentRowIndex) {
   });
   
   // Win condition
-  if (currentRow.querySelectorAll('.win').length === state.wordLength) {
+  if (currentRow.querySelectorAll('.win').length === wordLength) {
     alert('you win!');
   } else {
     focusNextRow(currentRow);
