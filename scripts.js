@@ -54,10 +54,9 @@ function handleFocus(event) {
 function handleEnter(currentRowIndex) {
   const currentRow = document.querySelector(`#row-${currentRowIndex}`);
   const inputs = currentRow.querySelectorAll('input');
-  
-  console.log(inputs[4].value);
-  if (inputs[state.wordLength].value = '') {
-    console.log('hey');
+
+  if (!inputs[state.wordLength - 1].value) {
+    return alert('Short word');
   }
   
   inputs.forEach((input, index) => {
